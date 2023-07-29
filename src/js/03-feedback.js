@@ -85,4 +85,3 @@ function onLoad() {
 //     event.currentTarget.reset()
 //     localStorage.removeItem("feedback-form-state");
 // };
-
