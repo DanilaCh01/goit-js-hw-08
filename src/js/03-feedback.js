@@ -1,50 +1,91 @@
 const throttle = require('lodash.throttle');
 
 const form = document.querySelector(".feedback-form");
-const input = document.querySelector("input");
-const textarea = document.querySelector("textarea");
+const STORAGE_KEY = "feedback-form-state";
+let data = {};
 
 const updateFormState = throttle(() => {
-  const data = {
-    email: input.value,
-    message: textarea.value
-  };
-    
-  localStorage.setItem("feedback-form-state", JSON.stringify(data));
+  data[e.target.name] = e.target.value.trim();
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 }, 500);
 
-form.addEventListener('input', onFormInput);
 form.addEventListener('submit', onFormSubmit);
 window.addEventListener('load', onLoad);
 
-function onFormInput() {
-  updateFormState();
-}
 
 function onFormSubmit(event) {
   event.preventDefault();
-
-  if (input.value === '' || textarea.value === '') {
-    alert('Пожалуйста, заполните все поля');
-    return;
-    };
-
-console.log(JSON.parse(localStorage.getItem("feedback-form-state")));
+console.log(data);
+data = {};
 event.currentTarget.reset();
-localStorage.removeItem("feedback-form-state");
-}
+localStorage.removeItem(STORAGE_KEY);
+};
 
 function onLoad() {
-  const savedData = JSON.parse(localStorage.getItem("feedback-form-state"));
+  try {
+    const dJSON = localStorage.getItem(STORAGE_KEY);
+    if (!dJSON) return;
+    data = JSON.parse(dJSON);
+    Object.entries(data).forEach(([key, val]) => {
+      form.elements[key].value = val;
+    });
+  } catch (error) {
+    console.log(error.message);
+  };
+};
 
-  if (savedData) {
-    input.value = savedData.email;
-    textarea.value = savedData.message;
-  } else {
-    input.value = '';
-    textarea.value = '';
-  }
-}
+
+
+
+
+
+// const throttle = require('lodash.throttle');
+
+// const form = document.querySelector(".feedback-form");
+// const input = document.querySelector("input");
+// const textarea = document.querySelector("textarea");
+
+// const updateFormState = throttle(() => {
+//   const data = {
+//     email: input.value,
+//     message: textarea.value
+//   };
+    
+//   localStorage.setItem("feedback-form-state", JSON.stringify(data));
+// }, 500);
+
+// form.addEventListener('input', onFormInput);
+// form.addEventListener('submit', onFormSubmit);
+// window.addEventListener('load', onLoad);
+
+// function onFormInput() {
+//   updateFormState();
+// }
+
+// function onFormSubmit(event) {
+//   event.preventDefault();
+
+//   if (input.value === '' || textarea.value === '') {
+//     alert('Пожалуйста, заполните все поля');
+//     return;
+//     };
+
+// console.log(JSON.parse(localStorage.getItem("feedback-form-state")));
+// event.currentTarget.reset();
+// localStorage.removeItem("feedback-form-state");
+// }
+
+// function onLoad() {
+//   const savedData = JSON.parse(localStorage.getItem("feedback-form-state"));
+
+//   if (savedData) {
+//     input.value = savedData.email;
+//     textarea.value = savedData.message;
+//   } else {
+//     input.value = '';
+//     textarea.value = '';
+//   }
+// }
 
 
 // Сейв старого коду на всяк випадок ----------------------------------------------------------------------- //
